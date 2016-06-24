@@ -1,0 +1,5 @@
+include CHANGELOG
+include bin/*
+include etc/*
+include etc/sysconfig/*
+include etc/logrotate/*

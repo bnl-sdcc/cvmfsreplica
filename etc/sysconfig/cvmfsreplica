@@ -1,0 +1,25 @@
+#
+# DESCRIPTION:
+#
+#     Sysconfig file for cvmfsreplica daemon
+#
+# VARIABLES:
+#
+#     CONF:
+#         The path to the main configuration file for the
+#         cvmfsreplica service.
+#         MANDATORY
+#
+#     CONSOLELOG:
+#         Path to the filename where to print out error messages 
+#         during the service initialization.
+#         MANDATORY
+#         Default value is /var/log/cvmfsreplica/console.log
+#         In case of using a different path, set it properly
+#         in the /etc/logrotate.d/cvmfsreplica file
+#
+
+CONF=/etc/cvmfsreplica/cvmfsreplica.conf 
+CONSOLELOG=/var/log/cvmfsreplica/console.log
+
+

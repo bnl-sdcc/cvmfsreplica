@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+
+"""
+Very simple wrapper to be executed by init script. 
+"""
+
+import getopt
+import sys
+from cvmfsreplica.service import serviceCLI
+
+
+# ===================================================================
+#   parsing input options 
+# ===================================================================
+
+class Options:
+    """
+    class to record input options.
+    An object of this class will be passed via
+        service.__init_( )
+    """
+
+    def __init__(self):
+        self.conffile = None
+
+
+def parseopts():
+    '''
+    parsing the input options.
+    These inputs are setup in /etc/sysconfig/cvmfsreplica
+    and passes via the init script
+    '''
+
+    options = Options()
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], '', ['conf='])
+        for o, a in opts:
+            if o == '--conf':
+                options.conffile = a
+        return options
+    except:
+        # note we use print( ) because there is no yet a logger defined
+        print('Error parsing the input options')
+        sys.exit(1)
+
+
+# ===================================================================
+
+def main():
+    try:
+        options = parseopts()
+        cvmfsreplicadaemon = serviceCLI(options)
+        cvmfsreplicadaemon.run()
+    except Exception, ex:
+        print ex
+
+
+if __name__ == "__main__":
+    main()

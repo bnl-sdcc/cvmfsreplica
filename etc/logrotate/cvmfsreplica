@@ -1,0 +1,24 @@
+/var/log/cvmfsreplica/cvmfsreplica.log {
+  missingok
+  notifempty
+  sharedscripts
+  size 100M
+  rotate 10 
+  postrotate
+    sleep 5
+    [ -e /etc/profile ] && . /etc/profile >/dev/null 2>&1 || true
+    [ -f /var/run/cvmfsreplica.pid ] && /etc/init.d/cvmfsreplica restart >/dev/null 2>&1 || true
+  endscript
+}
+/var/log/cvmfsreplica/console.log {
+  missingok
+  notifempty
+  sharedscripts
+  size 50M
+  rotate 2
+  postrotate
+    sleep 5
+    [ -e /etc/profile ] && . /etc/profile >/dev/null 2>&1 || true
+    [ -f /var/run/cvmfsreplica.pid ] && /etc/init.d/cvmfsreplica restart >/dev/null 2>&1 || true
+  endscript
+}
