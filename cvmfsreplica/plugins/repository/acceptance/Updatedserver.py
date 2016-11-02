@@ -68,7 +68,7 @@ class Updatedserver(RepositoryPluginAcceptanceInterface):
             cvmfs_upstream_storage = self.repository._get_cvmfs_upstream_storage() # FIXME, this should not be here
             localfile = '%s/.cvmfspublished' %cvmfs_upstream_storage
             if not os.path.isfile(localfile):
-                self.log.warning('local file %s does not exist. Returning True')
+                self.log.warning('local file %s does not exist. Returning True' %localfile)
                 return True
             else:
                 # FIXME: too much duplicated code
