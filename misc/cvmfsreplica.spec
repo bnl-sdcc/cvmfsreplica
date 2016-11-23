@@ -69,13 +69,14 @@ sed -i '/\/etc\/sysconfig\/cvmfsreplica/ s/^/%config(noreplace) /'  INSTALLED_FI
 #%else
 #install -m 0644 etc/cvmfsreplica /etc/init.d/
 #%endif
-###################################################################
+
+
 %if %systemd
 # Copy systemd files into place
 install -d $RPM_BUILD_ROOT%{_unitdir}
 install -m 0644 etc/cvmfsreplica.service $RPM_BUILD_ROOT%{_unitdir}/
-install -m 0755 etc/cvmfsreplica.start /usr/bin/cvmfsreplica.start
-install -m 0755 etc/cvmfsreplica.stop /usr/bin/cvmfsreplica.stop
+install -m 0755 etc/cvmfsreplica.start $RPM_BUILD_ROOT%{_bindir}/cvmfsreplica.start
+install -m 0755 etc/cvmfsreplica.stop $RPM_BUILD_ROOT%{_bindir}/cvmfsreplica.stop
 %else
 # Copy init script into place
 install -d $RPM_BUILD_ROOT%{_initrddir}
@@ -83,6 +84,10 @@ install -m 0755 etc/cvmfsreplica $RPM_BUILD_ROOT%{_initrddir}/cvmfsreplica
 %endif
 
 ###################################################################
+
+
+
+
 
 mkdir -pm0755 $RPM_BUILD_ROOT%{_var}/log/cvmfsreplica
 
@@ -98,6 +103,9 @@ rm -rf $RPM_BUILD_ROOT
 %else
 %{_initrddir}/cvmfsreplica
 %endif
+%{_bindir}/cvmfsreplica.start
+%{_bindir}/cvmfsreplica.stop
+
 
 
 %post
@@ -106,3 +114,4 @@ systemctl enable cvmfsreplica
 %else
 /sbin/chkconfig --add cvmfsreplica
 %endif
+
