@@ -1,3 +1,7 @@
+0.9.3-2
+
+* adding scripts and files to deal with systemd (temporary solution)
+
 0.9.3
 
 * bugs fixed

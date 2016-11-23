@@ -1,0 +1,11 @@
+[Unit]
+Description=on and off cvmfsreplica
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/cvmfsreplica.start
+ExecStop=/usr/bin/cvmfsreplica.stop
+
+[Install]
+WantedBy=multi-user.target
+

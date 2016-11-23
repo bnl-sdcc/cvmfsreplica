@@ -33,7 +33,7 @@ initd_files = ['etc/cvmfsreplica',]
 rpm_data_files=[('/etc/cvmfsreplica', etc_files),
                 ('/etc/sysconfig', sysconfig_files),
                 ('/etc/logrotate.d', logrotate_files),                                        
-                ('/etc/init.d', initd_files),
+                #('/etc/init.d', initd_files),
                ]
 
 # -----------------------------------------------------------

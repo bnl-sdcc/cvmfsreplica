@@ -1,0 +1,118 @@
+#!/bin/bash
+#
+#   from /etc/rc.d/init.d/cvmfsreplica
+#
+
+
+
+###############################################################################
+
+# Source function library.
+# Standard RedHat
+if [ -f /etc/rc.d/init.d/functions ]; then
+   . /etc/rc.d/init.d/functions
+fi
+
+# Use LSB locations for e.g. SuSE
+if [ -f /lib/lsb/init-functions ]; then
+   . /lib/lsb/init-functions
+fi
+
+# Source standard environment
+for i in /etc/profile.d/*.sh; do
+    if [ -r "$i" ]; then
+            . $i >/dev/null 2>&1
+    fi
+done
+
+###############################################################################
+
+HEADDIR=/
+SYSCONF=/etc/sysconfig/cvmfsreplica
+BINDIR=/usr/bin
+ETCDIR=/etc/cvmfsreplica
+PIDFILE=/var/run/cvmfsreplica.pid
+CONF=$ETCDIR/cvmfsreplica.conf
+
+# Source settings from sysconfig
+# overriding default if present
+# sysconfig sets variables
+#   $CONF
+#   $CONSOLELOG 
+
+if [ -f $SYSCONF ]; then
+   . $SYSCONF
+fi
+
+if [ -f /etc/profile ]; then
+   . /etc/profile
+fi
+
+###############################################################################
+#       FUNCTIONS
+###############################################################################
+
+RETVAL=0
+#
+# See how we were called.
+#
+check() {
+    
+    # Check if cvmfsreplica is executable
+    test -x $BINDIR/cvmfsreplica || exit 5
+}
+
+create_var_run(){
+    # function to create directory  $HEADDIR/var/run 
+    # if it does not exist. 
+    # It is needed to place the file cvmfsreplica.pid 
+    if [ ! -d $HEADDIR/var/run/ ]; then
+        mkdir -p $HEADDIR/var/run/
+    fi
+}
+
+create_var_log(){
+    # function to create directory  $HEADDIR/var/log/cvmfsreplica
+    # if it does not exist. 
+    if [ ! -d $HEADDIR/var/log/cvmfsreplica ]; then
+        mkdir -p $HEADDIR/var/log/cvmfsreplica/
+    fi
+}
+
+
+start() {
+    # Check if it is already running
+    PROGRETVAL=0
+    if [ ! -f $PIDFILE ]; then
+        echo -n $"Starting cvmfsreplica daemon: "   
+        create_var_run
+        create_var_log
+        $BINDIR/cvmfsreplica --conf=$CONF >> $CONSOLELOG 2>&1 &
+        RETVAL=$?
+        PID=$!
+        [ "$RETVAL" -eq 0 ] && echo $! > $PIDFILE        
+
+        sleep 3
+        if checkpid $PID; then
+            PROGRETVAL=0
+        else
+            wait $PID
+            PROGRETVAL=$?
+            rm -f $PIDFILE
+        fi
+        [ "$PROGRETVAL" -eq 0 ] && success $"cvmfsreplica startup" || failure $"cvmfsreplica startup"
+        echo
+    else
+        if checkpid $PID; then
+            echo "$0: daemon with PID $PID already running." && success $"cvmfsreplica startup"
+            PROGRETVAL=0
+        else
+            echo "$0: daemon dead but PID file exists: $PIDFILE" && failure $"cvmfsreplica startup"
+            PROGRETVAL=1
+        fi
+    fi
+
+    return $PROGRETVAL
+}
+
+start

@@ -1,0 +1,76 @@
+#!/bin/bash
+#
+#   from /etc/rc.d/init.d/cvmfsreplica
+
+
+
+###############################################################################
+
+# Source function library.
+# Standard RedHat
+if [ -f /etc/rc.d/init.d/functions ]; then
+   . /etc/rc.d/init.d/functions
+fi
+
+# Use LSB locations for e.g. SuSE
+if [ -f /lib/lsb/init-functions ]; then
+   . /lib/lsb/init-functions
+fi
+
+# Source standard environment
+for i in /etc/profile.d/*.sh; do
+    if [ -r "$i" ]; then
+            . $i >/dev/null 2>&1
+    fi
+done
+
+###############################################################################
+
+HEADDIR=/
+SYSCONF=/etc/sysconfig/cvmfsreplica
+BINDIR=/usr/bin
+ETCDIR=/etc/cvmfsreplica
+PIDFILE=/var/run/cvmfsreplica.pid
+CONF=$ETCDIR/cvmfsreplica.conf
+
+# Source settings from sysconfig
+# overriding default if present
+# sysconfig sets variables
+#   $CONF
+#   $CONSOLELOG 
+
+if [ -f $SYSCONF ]; then
+   . $SYSCONF
+fi
+
+if [ -f /etc/profile ]; then
+   . /etc/profile
+fi
+
+###############################################################################
+#       FUNCTIONS
+###############################################################################
+
+RETVAL=0
+#
+# See how we were called.
+#
+check() {
+    
+    # Check if cvmfsreplica is executable
+    test -x $BINDIR/cvmfsreplica || exit 5
+}
+
+stop() {
+
+    check
+    echo -n $"Stopping cvmsfreplica daemon: "
+    killproc -p $PIDFILE cvmfsreplica
+    RETVAL=$?
+    [ $RETVAL -eq 0 ] && rm -f $PIDFILE && success $"cvmfsreplica shutdown" || failure $"cvmfsreplica shutdown"
+    echo
+    return $RETVAL
+}
+
+stop
+
