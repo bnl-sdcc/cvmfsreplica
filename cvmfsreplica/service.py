@@ -1,7 +1,7 @@
 #!/usr/bin/env python   
 
 
-__version__ = "0.9.3"
+__version__ = "0.9.4"
 
 import commands
 import datetime

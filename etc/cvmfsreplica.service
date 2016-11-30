@@ -2,7 +2,7 @@
 Description=on and off cvmfsreplica
 
 [Service]
-Type=oneshot
+Type=forking
 ExecStart=/usr/sbin/cvmfsreplica.start
 ExecStop=/usr/sbin/cvmfsreplica.stop
 
