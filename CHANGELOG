@@ -1,3 +1,11 @@
+0.9.5
+
+* added priorities to the repositories
+
+0.9.4
+
+* added some support for deployment on RedHat 7
+
 0.9.3-2
 
 * adding scripts and files to deal with systemd (temporary solution)

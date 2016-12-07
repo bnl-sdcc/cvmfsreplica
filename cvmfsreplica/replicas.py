@@ -203,6 +203,10 @@ class Repository(threading.Thread):
         #self.repositoryname = self.conf.get("repositoryname") 
         self.interval = self.conf.getint("interval")
         self.ntrials = self.conf.getint("ntrials")
+        if self.conf.has_option("priority"):
+            self.priority = self.conf.getint("priority")
+        else:
+            self.priority = 0
         try:
             self._get_cvmfs_config()
             self.reportplugins = pm.readplugins(self, 'repository', 'report', self.conf)
@@ -379,9 +383,28 @@ class ReplicaRequest(object):
         self.log = logging.getLogger('cvmfsreplica.replicarequest')
         self.repository = repository
         self.repositoryname = self.repository.repositoryname
+        self.priority = self.repository.priority
         self.ntrials = self.repository.ntrials
         self.done = False
         self.status = None 
+        self.timestamp = int( time.time() )  # the time this Request object was created
+
+
+    def __cmp__(self, other):
+        '''
+        method to sort the request in the PriorityQueue
+        '''
+        if self.priority < other.priority:
+            return 1
+        if self.priority > other.priority:
+            return -1
+        if self.priority == other.priority:
+            if self.timestamp < other.timestamp:
+                return -1
+            if self.timestamp > other.timestamp:
+                return 1
+            if self.timestamp == other.timestamp:
+                return 0
 
 
     def run(self):
@@ -453,14 +476,14 @@ class ReplicaRequest(object):
 # ReplicaManager to have an object 
 #       self.replicarequestqueue = Queue.Queue()
 #
-class ReplicaRequestQueue(Queue.Queue):
+class ReplicaRequestQueue(Queue.PriorityQueue):
     """
     Pipe where ReplicaRequest objects are being queue'ed.
     """
 
     def __init__(self):
 
-        Queue.Queue.__init__(self)
+        Queue.PriorityQueue.__init__(self)
         self.log = logging.getLogger('cvmfsreplica.replicarequestqueue')
 
 
