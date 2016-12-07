@@ -1,6 +1,6 @@
 %define name cvmfsreplica
-%define version 0.9.4
-%define unmangled_version 0.9.4
+%define version 0.9.5
+%define unmangled_version 0.9.5
 %define release 1
 
 Summary: cvmfsreplica package
